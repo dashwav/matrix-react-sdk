@@ -1468,20 +1468,16 @@ export default createReactClass({
 
         if (SettingsStore.isFeatureEnabled("feature_dm_verification")) {
             cli.on("crypto.verification.request", request => {
-                let requestObserver;
-                if (request.event.getRoomId()) {
-                    requestObserver = new KeyVerificationStateObserver(
-                        request.event, MatrixClientPeg.get());
-                }
-
-                if (!requestObserver || requestObserver.pending) {
+                console.log(`MatrixChat got a .request ${request.channel.transactionId}`, request.event.getRoomId());
+                if (request.pending) {
+                    console.log(`emitting toast for verification request with txnid ${request.channel.transactionId}`, request.event && request.event.getId());
                     dis.dispatch({
                         action: "show_toast",
                         toast: {
                             key: request.event.getId(),
                             title: _t("Verification Request"),
                             icon: "verification",
-                            props: {request, requestObserver},
+                            props: {request},
                             component: sdk.getComponent("toasts.VerificationRequestToast"),
                         },
                     });
