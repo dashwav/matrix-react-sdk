@@ -40,6 +40,7 @@ import E2EIcon from "../rooms/E2EIcon";
 import withLegacyMatrixClient from "../../../utils/withLegacyMatrixClient";
 import {useEventEmitter} from "../../../hooks/useEventEmitter";
 import {textualPowerLevel} from '../../../Roles';
+import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
 
 const _disambiguateDevices = (devices) => {
     const names = Object.create(null);
@@ -126,6 +127,14 @@ function verifyDevice(userId, device) {
         userId: userId,
         device: device,
     }, null, /* priority = */ false, /* static = */ true);
+}
+
+function verifyUser(user) {
+    dis.dispatch({
+        action: "set_right_panel_phase",
+        phase: RIGHT_PANEL_PHASES.EncryptionPanel,
+        refireParams: {member: user},
+    });
 }
 
 function DeviceItem({userId, device}) {
@@ -1268,7 +1277,7 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
         <div className="mx_UserInfo_container">
             <h3>{ _t("Security") }</h3>
             <p>{ text }</p>
-            <AccessibleButton className="mx_UserInfo_verify" onClick={() => verifyDevice(user.userId, null)}>{_t("Verify")}</AccessibleButton>
+            <AccessibleButton className="mx_UserInfo_verify" onClick={() => verifyUser(user)}>{_t("Verify")}</AccessibleButton>
             { devicesSection }
         </div>
     );
@@ -1286,7 +1295,7 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
 
             <div className="mx_UserInfo_container">
                 <div className="mx_UserInfo_profile">
-                    <div >
+                    <div>
                         <h2 aria-label={displayName}>
                             { e2eIcon }
                             { displayName }
