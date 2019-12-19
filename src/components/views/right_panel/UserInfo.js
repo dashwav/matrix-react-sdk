@@ -1221,15 +1221,13 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
                 setDevices(null);
             }
         }
-        if (isRoomEncrypted) {
-            _downloadDeviceList();
-        }
+        _downloadDeviceList();
 
         // Handle being unmounted
         return () => {
             cancelled = true;
         };
-    }, [cli, user.userId, isRoomEncrypted]);
+    }, [cli, user.userId]);
 
     // Listen to changes
     useEffect(() => {
@@ -1245,18 +1243,13 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
                 });
             }
         };
-
-        if (isRoomEncrypted) {
-            cli.on("deviceVerificationChanged", onDeviceVerificationChanged);
-        }
+        cli.on("deviceVerificationChanged", onDeviceVerificationChanged);
         // Handle being unmounted
         return () => {
             cancel = true;
-            if (isRoomEncrypted) {
-                cli.removeListener("deviceVerificationChanged", onDeviceVerificationChanged);
-            }
+            cli.removeListener("deviceVerificationChanged", onDeviceVerificationChanged);
         };
-    }, [cli, user.userId, isRoomEncrypted]);
+    }, [cli, user.userId]);
 
     let text;
     if (!isRoomEncrypted) {
@@ -1271,8 +1264,9 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
         text = _t("Messages in this room are end-to-end encrypted.");
     }
 
-    const devicesSection = isRoomEncrypted ?
-        (<DevicesSection loading={devices === undefined} devices={devices} userId={user.userId} />) : null;
+    const devicesSection = <DevicesSection
+        loading={devices === undefined}
+        devices={devices} userId={user.userId} />;
     const securitySection = (
         <div className="mx_UserInfo_container">
             <h3>{ _t("Security") }</h3>
