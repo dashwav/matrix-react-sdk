@@ -1264,14 +1264,19 @@ const UserInfo = withLegacyMatrixClient(({matrixClient: cli, user, groupId, room
         text = _t("Messages in this room are end-to-end encrypted.");
     }
 
+    const isMe = user.userId === cli.getUserId();
     const devicesSection = <DevicesSection
         loading={devices === undefined}
         devices={devices} userId={user.userId} />;
+    const verifyButton = isMe ? null : <AccessibleButton
+        className="mx_UserInfo_verify"
+        onClick={() => verifyUser(user)}
+    >{_t("Verify")}</AccessibleButton>;
     const securitySection = (
         <div className="mx_UserInfo_container">
             <h3>{ _t("Security") }</h3>
             <p>{ text }</p>
-            <AccessibleButton className="mx_UserInfo_verify" onClick={() => verifyUser(user)}>{_t("Verify")}</AccessibleButton>
+            { verifyButton }
             { devicesSection }
         </div>
     );
